@@ -49,8 +49,6 @@ $(async () => {
 			const imageCOntainer = $("#image-container");
 			$(imageCOntainer).empty();
 			for (const img in project.images) {
-				console.log(project.images[img]);
-
 				const newElement = $("<div> </div>").attr({
 					class:
 						"carousel-item   w-screen md:w-1/3 max-w-maxWidth min-w-minWidth bg-dark rounded  grid place-items-center  md:mx-8 ",
@@ -64,12 +62,11 @@ $(async () => {
 				});
 				newElement.append(newImage);
 				imageCOntainer.append(newElement);
-
-				console.log(newElement.outerWidth());
 			}
 		}
 	}
 
+	let currentIndex = 0;
 	// handle click on each project to change the corresponding data
 	$("#project-titles").on("click", "div[data-id]", function () {
 		const selectedId = $(this).data("id");
@@ -87,32 +84,32 @@ $(async () => {
 
 			//asign description for selected project
 
-				const imageCOntainer = $("#image-container");
-				$(imageCOntainer).empty();
-				for (const img in selectedProject.images) {
-					console.log(selectedProject.images[img]);
+			const imageCOntainer = $("#image-container");
+			$(imageCOntainer).empty();
+			for (const img in selectedProject.images) {
+				const newElement = $("<div> </div>").attr({
+					class:
+						"carousel-item w-screen md:w-1/3 max-w-maxWidth min-w-minWidth bg-dark rounded  grid place-items-center  md:mx-8 ",
+					"data-id": img,
+				});
 
-					const newElement = $("<div> </div>").attr({
-						class:
-							"carousel-item w-screen md:w-1/3 max-w-maxWidth min-w-minWidth bg-dark rounded  grid place-items-center  md:mx-8 ",
-						"data-id": img,
-					});
+				const newImage = $("<img />").attr({
+					src: `./asset/${selectedProject.images[img]}`,
+					alt: "Project Image",
+					class:
+						"object-cover transition-all transform hover:scale-90 origin-left",
+				});
+				newElement.append(newImage);
+				imageCOntainer.append(newElement);
+			}
 
-					const newImage = $("<img />").attr({
-						src: `./asset/${selectedProject.images[img]}`,
-						alt: "Project Image",
-						class: "object-cover transition-all transform hover:scale-90 origin-left",
-					});
-					newElement.append(newImage);
-					imageCOntainer.append(newElement);
-
-					console.log(newElement.outerWidth());
-				}
+			// Reset currentIndex when a new project is clicked
+			currentIndex = 0;
+			$("#image-container").css("left", 0); // Reset the image container's position
 		}
 	});
 
 	// Handle the "Next" and "Previous" buttons click
-	let currentIndex = 0;
 	let isAnimating = false; // To prevent spam clicks
 
 	$("#next").click(function () {
