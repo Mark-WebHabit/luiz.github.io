@@ -116,7 +116,7 @@ $(async () => {
 			.css('background', `url("asset/${items[i]}") center center / cover no-repeat`)
 			.on('click', (e) => {
 				const loc = window.location.href;				
-				window.open(`${loc}/asset/${items[i]}`, '_blank').focus();				
+				window.open(`${loc}/luiz.github.io/asset/${items[i]}`, '_blank').focus();				
 			})
             .appendTo('#carousel-main')
     }
