@@ -21,6 +21,10 @@ module.exports = {
 			},
 			maxHeight: {
 				"80vh": "80vh",
+				"carousel-max": "20vh"
+			},
+			minHeight:{
+				"carousel-min": "60vh"
 			},
 			borderColor: {
 				hover: "#B34700",

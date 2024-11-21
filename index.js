@@ -19,6 +19,10 @@ $(async () => {
 	// only fetch the data once
 	const projects = await fetchProjects();
 	let selectedProjectId = projects[0]?.id ?? 0;
+	let images = projects[0]?.images;
+	updateCarousel(images.length, images);
+
+	
 
 	// render titles for categories
 	for (let project of projects) {
@@ -66,7 +70,6 @@ $(async () => {
 		}
 	}
 
-	let currentIndex = 0;
 	// handle click on each project to change the corresponding data
 	$("#project-titles").on("click", "div[data-id]", function () {
 		const selectedId = $(this).data("id");
@@ -82,80 +85,59 @@ $(async () => {
 			$("#project-titles div").removeClass("border border-hover");
 			$(this).addClass("border border-hover");
 
-			//asign description for selected project
 
-			const imageCOntainer = $("#image-container");
-			$(imageCOntainer).empty();
-			for (const img in selectedProject.images) {
-				const newElement = $("<div> </div>").attr({
-					class:
-						"carousel-item w-screen md:w-1/3 max-w-maxWidth min-w-minWidth bg-dark rounded  grid place-items-center  md:mx-8 ",
-					"data-id": img,
-				});
-
-				const newImage = $("<img />").attr({
-					src: `./asset/${selectedProject.images[img]}`,
-					alt: "Project Image",
-					class:
-						"object-cover transition-all transform hover:scale-90 origin-left",
-				});
-				newElement.append(newImage);
-				imageCOntainer.append(newElement);
-			}
-
-			// Reset currentIndex when a new project is clicked
-			currentIndex = 0;
-			$("#image-container").css("left", 0); // Reset the image container's position
+			updateCarousel(selectedProject.images.length, selectedProject.images);
 		}
+
+
 	});
 
-	// Handle the "Next" and "Previous" buttons click
-	let isAnimating = false; // To prevent spam clicks
 
-	$("#next").click(function () {
-		if (!isAnimating) {
-			const images = $("#image-container div");
+    // Function to generate random colors
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
 
-			if (currentIndex < images.length - 1) {
-				currentIndex++;
-				const nextImage = $(images[currentIndex]);
-				const nextImageWidth = nextImage.outerWidth();
+	function updateCarousel(numItems, items) {
+    // Clear existing children
+    $('.carousel-wrapper #carousel-main').empty();
+    $('.carousel-wrapper .radio-buttons-container').empty();
 
-				isAnimating = true; // Disable the buttons during the animation
-				$("#image-container").animate(
-					{
-						left: `-=${nextImageWidth}px`,
-					},
-					300, // Animation duration in milliseconds
-					() => {
-						isAnimating = false; // Re-enable the buttons after the animation is complete
-					}
-				);
-			}
-		}
-	});
+    // Add carousel items
+    for (let i = 1; i <= numItems; i++) {
+        $('<div>')
+            .addClass('item')
+            .css('--offset', i)
+			.css('background', `url("asset/${items[i]}") center center / cover no-repeat`)
+			.on('click', (e) => {
+				const loc = window.location.origin;
+				window.open(`${loc}/asset/${items[i]}`, '_blank').focus();				
+			})
+            .appendTo('#carousel-main')
+    }
 
-	$("#prev").click(function () {
-		if (!isAnimating) {
-			const images = $("#image-container div");
+    // Add radio buttons
+    for (let i = 1; i <= numItems; i++) {
+        const radio = $('<input>')
+            .attr('type', 'radio')
+            .attr('name', 'position')
+            .on('change', function () {
+                $('#carousel-main').css('--position', i);
+            });
 
-			if (currentIndex > 0) {
-				const prevImage = $(images[currentIndex]);
-				currentIndex--;
+        if (i === 1) radio.prop('checked', true);
 
-				const prevImageWidth = prevImage.outerWidth();
+        $('.radio-buttons-container').append(radio);
+    }
 
-				isAnimating = true; // Disable the buttons during the animation
-				$("#image-container").animate(
-					{
-						left: `+=${prevImageWidth}px`,
-					},
-					300, // Animation duration in milliseconds
-					() => {
-						isAnimating = false; // Re-enable the buttons after the animation is complete
-					}
-				);
-			}
-		}
-	});
+    // Update carousel variables
+    $('#carousel-main').css('--items', numItems);
+    $('#carousel-main').css('--middle', Math.ceil(numItems / 2));
+}
+
 });
